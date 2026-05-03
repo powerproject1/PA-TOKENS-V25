@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PA TOKENS</title>
+
+<style>
+body{
+margin:0;
+background:#0b0b0f;
+color:white;
+font-family:Arial;
+}
+
+/* 🔥 GOLD PREMIUM THEME */
+:root{
+--gold:#ffcc00;
+--goldGlow:0 0 25px rgba(255,204,0,0.6);
+}
+
+.top{
+padding:12px;
+text-align:center;
+font-size:20px;
+color:var(--gold);
+font-weight:bold;
+text-shadow:var(--goldGlow);
+}
+
+.balance{
+margin:10px;
+padding:12px;
+border-radius:12px;
+background:#15151c;
+display:flex;
+justify-content:space-between;
+border:1px solid rgba(255,204,0,0.2);
+}
+
+.page{display:none;padding:10px;}
+.active{display:block;}
+
+.slot-box{
+padding:20px;
+margin:10px;
+border-radius:18px;
+border:2px solid var(--gold);
+text-align:center;
+box-shadow:var(--goldGlow);
+transition:0.2s;
+}
+
+.reel{font-size:40px;margin:0 6px;}
+
+.bet{display:flex;margin:10px;}
+.bet button{
+flex:1;
+padding:12px;
+background:#222;
+border:none;
+color:white;
+transition:0.2s;
+}
+
+.bet button:hover{
+box-shadow:var(--goldGlow);
+border:1px solid var(--gold);
+}
+
+.spin{
+margin:10px;
+width:calc(100% - 20px);
+padding:15px;
+background:linear-gradient(45deg,#2ecc71,#1abc9c);
+border:none;
+border-radius:12px;
+font-size:18px;
+color:black;
+font-weight:bold;
+box-shadow:0 0 20px rgba(46,204,113,0.4);
+}
+
+.card{
+margin:10px;
+padding:15px;
+background:#121218;
+border-radius:15px;
+border:1px solid rgba(255,204,0,0.15);
+}
+
+.task{
+margin-top:10px;
+padding:10px;
+background:#0e0e14;
+border-radius:12px;
+border:1px solid #1f1f2a;
+}
+
+.task button{
+width:100%;
+padding:10px;
+border:none;
+border-radius:10px;
+background:var(--gold);
+color:black;
+font-weight:bold;
+box-shadow:var(--goldGlow);
+}
+
+.stat{
+padding:8px;
+margin:6px 0;
+background:#0e0e14;
+border-radius:10px;
+border:1px solid #1f1f2a;
+}
+
+.nav{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+display:flex;
+background:#111;
+border-top:1px solid rgba(255,204,0,0.2);
+}
+
+.nav button{
+flex:1;
+padding:12px;
+background:none;
+border:none;
+color:white;
+font-size:14px;
+}
+
+.nav button.active{
+background:var(--gold);
+color:black;
+font-weight:bold;
+box-shadow:var(--goldGlow);
+}
+
+.winGlow{box-shadow:0 0 25px #2ecc71;}
+.loseGlow{box-shadow:0 0 25px #e74c3c;}
+
+.coin{
+position:fixed;
+font-size:22px;
+pointer-events:none;
+text-shadow:var(--goldGlow);
+}
+
+#musicBtn{
+position:fixed;
+top:10px;
+right:10px;
+z-index:9999;
+padding:10px;
+border:none;
+border-radius:10px;
+background:#222;
+color:white;
+box-shadow:var(--goldGlow);
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">✨ PA TOKENS ✨</div>
+
+<div class="balance">
+<span>💰 Баланс:</span>
+<span id="bal"></span>
+</div>
+
+<button id="musicBtn">🔇 MUSIC</button>
+
+<!-- SLOT -->
+<div id="page1" class="page active">
+
+<div id="slotBox" class="slot-box">
+<span id="r1" class="reel">🍒</span>
+<span id="r2" class="reel">🍒</span>
+<span id="r3" class="reel">🍒</span>
+</div>
+
+<div class="bet">
+<button onclick="changeBet(-100)">-</button>
+<button id="bet">100</button>
+<button onclick="changeBet(100)">+</button>
+</div>
+
+<button class="spin" onclick="spin()">КРУТИТЬ</button>
+<button onclick="autoSpin()">AUTO</button>
+
+</div>
+
+<!-- TASKS -->
+<div id="page2" class="page">
+
+<div class="card">
+<h3>🎁 ЗАДАНИЯ</h3>
+
+<div class="task">
+<p>🎰 5 спинов</p>
+<p id="t1">0 / 5</p>
+<button onclick="claim1()">+5000</button>
+</div>
+
+<div class="task">
+<p>🎰 10 спинов</p>
+<p id="t2">0 / 10</p>
+<button onclick="claim2()">+15000</button>
+</div>
+
+<div class="task">
+<p>💎 Выиграй</p>
+<p id="t3">0 / 1</p>
+<button onclick="claim3()">+25000</button>
+</div>
+
+</div>
+
+</div>
+
+<!-- PROMO -->
+<div id="page3" class="page">
+<div class="card">
+<h3>🎟 PROMO</h3>
+<input id="promo">
+<button onclick="usePromo()">Активировать</button>
+<p id="promoText"></p>
+</div>
+</div>
+
+<!-- PROFILE -->
+<div id="page4" class="page">
+
+<div class="card">
+
+<h3>👤 ПРОФИЛЬ</h3>
+
+<div class="stat">💰 Баланс: <span id="balP"></span></div>
+<div class="stat">⭐ Уровень: <span id="lvl"></span></div>
+<div class="stat">⚡ XP: <span id="xp"></span></div>
+<div class="stat">🏆 Рекорд: <span id="best"></span></div>
+
+</div>
+
+</div>
+
+<!-- NAV -->
+<div class="nav">
+<button onclick="openPage(1)" class="active">🎰</button>
+<button onclick="openPage(2)">🎁</button>
+<button onclick="openPage(3)">🎟</button>
+<button onclick="openPage(4)">👤</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="bgMusic" loop src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_1c7f7d0a6a.mp3"></audio>
+<audio id="spinSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2b9f1b0c2b.mp3"></audio>
+<audio id="winSound" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_8f6f0c6c1d.mp3"></audio>
+<audio id="loseSound" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_8f6f0c6c1d.mp3"></audio>
+
+<script>
+
+/* USER */
+let user=JSON.parse(localStorage.getItem("user"))||{
+bal:5000,
+bet:100,
+xp:0,
+lvl:1,
+bestWin:0,
+tasks:{s1:0,s2:0,win:false,reward1:false,reward2:false,reward3:false}
+};
+
+if(!user.bal||user.bal<=0) user.bal=5000;
+
+function save(){
+localStorage.setItem("user",JSON.stringify(user));
+}
+
+/* UPDATE */
+function update(){
+
+bal.innerText=Math.floor(user.bal);
+bet.innerText=user.bet;
+lvl.innerText=user.lvl;
+xp.innerText=user.xp;
+best.innerText=user.bestWin;
+
+t1.innerText=user.tasks.s1+" / 5";
+t2.innerText=user.tasks.s1+" / 10";
+t3.innerText=user.tasks.win?"1 / 1":"0 / 1";
+
+balP.innerText=user.bal;
+
+save();
+}
+
+/* NAV */
+function openPage(n){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById("page"+n).classList.add("active");
+
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+document.querySelectorAll(".nav button")[n-1].classList.add("active");
+}
+
+/* MUSIC */
+let musicOn=false;
+let bg=document.getElementById("bgMusic");
+
+document.addEventListener("click",()=>{
+bg.play().catch(()=>{});
+},{once:true});
+
+musicBtn.onclick=()=>{
+musicOn=!musicOn;
+if(musicOn){
+bg.play();
+musicBtn.innerText="🔊 MUSIC";
+}else{
+bg.pause();
+musicBtn.innerText="🔇 MUSIC";
+}
+};
+
+/* BET */
+function changeBet(x){
+user.bet+=x;
+if(user.bet<100) user.bet=100;
+update();
+}
+
+/* AUTO */
+let auto=false;
+function autoSpin(){
+auto=!auto;
+if(auto) run();
+}
+function run(){
+if(!auto) return;
+spin();
+setTimeout(run,3500);
+}
+
+/* SPIN */
+let spinning=false;
+
+function spin(){
+
+if(spinning) return;
+if(user.bet>user.bal) return;
+
+spinning=true;
+
+let s=document.getElementById("spinSound");
+s.currentTime=0;
+s.play().catch(()=>{});
+
+let box=document.getElementById("slotBox");
+box.classList.remove("winGlow","loseGlow");
+
+user.bal-=user.bet;
+
+let sym=["🍒","🍊","🍇","💎","7️⃣"];
+
+let interval=setInterval(()=>{
+r1.innerText=sym[Math.random()*5|0];
+r2.innerText=sym[Math.random()*5|0];
+r3.innerText=sym[Math.random()*5|0];
+},80);
+
+setTimeout(()=>{
+
+clearInterval(interval);
+
+let a=sym[Math.random()*5|0];
+let b=sym[Math.random()*5|0];
+let c=sym[Math.random()*5|0];
+
+r1.innerText=a;
+r2.innerText=b;
+r3.innerText=c;
+
+let m=0;
+
+if(a=="7️⃣"&&b=="7️⃣"&&c=="7️⃣") m=50;
+else if(a=="💎"&&b=="💎"&&c=="💎") m=20;
+else if(a=="🍇"&&b=="🍇"&&c=="🍇") m=10;
+else if(a=="🍊"&&b=="🍊"&&c=="🍊") m=5;
+else if(a=="🍒"&&b=="🍒"&&c=="🍒") m=3;
+else if(a==b||b==c) m=0.5;
+
+let win=Math.floor(user.bet*m);
+
+user.tasks.s1++;
+if(win>0) user.tasks.win=true;
+
+if(win>user.bestWin) user.bestWin=win;
+
+if(win>0){
+user.bal+=win;
+box.classList.add("winGlow");
+document.getElementById("winSound").play().catch(()=>{});
+if(navigator.vibrate) navigator.vibrate([100,50,100]);
+coins();
+}else{
+box.classList.add("loseGlow");
+document.getElementById("loseSound").play().catch(()=>{});
+if(navigator.vibrate) navigator.vibrate(200);
+}
+
+user.xp+=10;
+if(user.xp>=user.lvl*100){
+user.xp=0;
+user.lvl++;
+}
+
+update();
+spinning=false;
+
+},3000);
+}
+
+/* COINS */
+function coins(){
+for(let i=0;i<25;i++){
+let c=document.createElement("div");
+c.className="coin";
+c.innerText="🪙";
+document.body.appendChild(c);
+
+let x=Math.random()*100;
+let y=60+Math.random()*20;
+let dx=(Math.random()-0.5)*300;
+let dy=- (Math.random()*400+100);
+
+c.style.left=x+"vw";
+c.style.top=y+"vh";
+
+c.animate([
+{transform:"translate(0,0)",opacity:1},
+{transform:`translate(${dx}px,${dy}px)`,opacity:0}
+],{duration:1200,easing:"ease-out"});
+
+setTimeout(()=>c.remove(),1300);
+}
+}
+
+update();
+
+</script>
+
+</body>
+</html>
